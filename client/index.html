@@ -33,10 +33,10 @@
   </div>
   <div id="chats"></div>
 
-  <script id="entry-template" type="text/x-handlebars-template">
-  <div class="entry">
-    <h1>{{username}}</h1>
-    <div class="message">
+  <script id="message-template" type="text/x-handlebars-template">
+  <div class="message">
+    <h1 class="username">{{username}}</h1>
+    <div class="messageBody">
       {{message}}
     </div>
   </div>
