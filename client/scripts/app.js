@@ -20,34 +20,38 @@ App.prototype.getMessages = function () {
     url: this.endpointServer + '/classes/messages',
     method: 'GET',
     dataType: 'json', //could be interpreted as a script
-    success: function(data) {
+    success: function (data) {
       console.log(data);
-      // invoke that.displayMessages(data);
+      that.storeAndDisplayNewMessages(data.results);
     },
-    error: function(error) {
+    error: function (error) {
       console.warn('Server Error: ', error);
     },
-    loading: function() {},
-    complete: function(data) {}
+    loading: function () { },
+    complete: function (data) { }
   });
 };
 
-App.prototype.displayMessages = function (data) {
-  // set messages = data (which is recvd from success callback and passed in)
-  // for each message
-  //    if (this.messages[key] is not stored)
-  //      store sanitize message into this.messages
-  //      add message to dom (this.addMessageToDOM(messages[i])
+App.prototype.storeAndDisplayNewMessages = function (messagesArr) {
+  for (let i = 0; i < messagesArr.length; i++) {
+    let objectId = messagesArr[i].objectId;
+    if (this.messages[objectId] === undefined) {
+      this.messages[objectId] = this.sanitizeMessage(messagesArr[i]);
+      this.displayMessage(this.messages[objectId]);
+    }
+  }
 };
 
 App.prototype.sanitizeMessage = function (msg) {
-  // attributesToSanitize = [username, roomname, text]
-  // for each attributesToSanitize (attName)
-  //    use jquery text/html trick to sanitize each att of msg
-  // return msg
+  let attributesToSanitize = ['username', 'roomname', 'text'];
+  for (let i = 0; i < attributesToSanitize.length; i++) {
+    let att = attributesToSanitize[i];
+    msg[att] = $('<div></div>').text(msg[att]).html();
+  }
+  return msg;
 };
 
-App.prototype.addMessageToDOM = function (msg) {
+App.prototype.displayMessage = function (msg) {
   // grab html string from DOM w template
   var templateString = $('#msg-template').html();
   // compile template
