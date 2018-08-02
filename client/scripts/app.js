@@ -120,7 +120,7 @@ App.prototype.handleRoomSelect = function (el) {
 App.prototype.handleAddRoom = function () {
   // prompt user to type in new room name
   let newRoomName = prompt('Enter a new room name: ') || this.currentRoom;
-  newRoomName = this.replaceIfBlankRoomName(newRoomName.trim(), 'toDescriptor');
+  newRoomName = this.escape(this.replaceIfBlankRoomName(newRoomName.trim(), 'toDescriptor'));
   //    check if room exists, if it doesn't
   //        then render room
   if (!this.roomExists(newRoomName)) {
@@ -188,9 +188,13 @@ App.prototype.sanitizeMessage = function (msg) {
   let attributesToSanitize = ['username', 'roomname', 'text'];
   for (let i = 0; i < attributesToSanitize.length; i++) {
     let att = attributesToSanitize[i];
-    msg[att] = $('<div></div>').text(msg[att]).html();
+    msg[att] = this.escape(msg[att]);
   }
   return msg;
+};
+
+App.prototype.escape = function(text) {
+  return  $('<div></div>').text(text).html();
 };
 
 App.prototype.roomExists = function(roomname) {
@@ -215,7 +219,7 @@ App.prototype.renderMessage = function (msg) {
       message: msg.text,
       roomname: msg.roomname,
       date: moment(msg.createdAt).format('llll'),
-      fromMe:  $('<div></div>').text(this.userName.trim()).html() === msg.username.trim()
+      fromMe:  this.escape(this.userName) === msg.username.trim()
     });
   const $renderedTemplate = $(renderedTemplate.trim());
 
