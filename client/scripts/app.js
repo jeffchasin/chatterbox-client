@@ -217,7 +217,7 @@ App.prototype.renderMessage = function (msg) {
     'data-username': msg.username,
     'data-roomname': msg.roomname
   });
-  $bubble.on('click', function(e) {
+  $bubble.find('.beFriend').on('click', function(e) {
     //this = DOM element
     that.handleUsernameClick(msg.username);
   });
