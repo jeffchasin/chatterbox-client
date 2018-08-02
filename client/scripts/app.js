@@ -139,7 +139,11 @@ App.prototype.handleUsernameClick = function (username) {
 
   // search for all messages in the DOM w .username
   // add .friends to it
-  $('[data-username="' + username + '"]').toggleClass('friend');
+  $('[data-username]').each(function() {
+    if ($(this).attr("data-username") === username) {
+      $(this).toggleClass('friend');
+    }
+  });
 };
 
 App.prototype.replaceIfBlankRoomName = function(roomName, blankToDescriptor) {
