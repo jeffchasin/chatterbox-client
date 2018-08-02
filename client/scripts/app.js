@@ -5,7 +5,9 @@ const App = function () {
   this.messages = {};
   this.timer = false;
   this.delay = 1000;
+  this.defaultNoRoomName = '[No Room]';
   this.currentRoom = 'lobby';
+  this.rooms = [];
   this.friends = [];
   this.init();
 };
@@ -15,7 +17,6 @@ App.prototype.init = function () {
   this.userName = urlParams.get('username');
   console.log('Hello ', this.userName);
   this.setUpUI();
-  // this.testTemplate();
 
   this.timer = setInterval(() => {
     this.fetch();
@@ -25,11 +26,18 @@ App.prototype.init = function () {
 
 App.prototype.setUpUI = function () {
   const that = this;
+  this.renderRoom(this.currentRoom);
+  //setup send button
   $('#send').off('submit'); 
   $('#send').on('submit', function (e) {
     e.preventDefault();
     that.handleSubmit(e, this);
   });
+  $('#roomSelect').on('change', function (e) {
+    that.handleRoomSelect(this);
+  });
+  //init filter
+  $('#roomSelect').trigger('change');
 };
 
 App.prototype.handleSubmit = function (e, el) {
@@ -93,6 +101,12 @@ App.prototype.send = function (msgObj) {
   });
 };
 
+App.prototype.handleRoomSelect = function (el) {
+  const roomName = $(el).val();
+  this.currentRoom = roomName;
+  this.filterMessagesByRoom(roomName);
+};
+
 App.prototype.handleUsernameClick = function (username) {
   // append $(this).text() to this.friends
   if (!this.isFriend(username)) {
@@ -105,20 +119,38 @@ App.prototype.handleUsernameClick = function (username) {
 };
 
 App.prototype.renderRoom = function (roomName) {
-  $('<option>' + roomName + '</option>').appendTo('#roomSelect');
+  this.rooms.push(roomName);
+  const $option = $('<option>' + roomName + '</option>');
+  const optionValue = (roomName === this.defaultNoRoomName) ? '' : roomName;
+  $option.val(optionValue);
+  $option.appendTo('#roomSelect');
 };
 
 App.prototype.storeAndDisplayNewMessages = function (messagesArr) {
   for (let i = 0; i < messagesArr.length; i++) {
     let objectId = messagesArr[i].objectId;
     if (this.messages[objectId] === undefined) {
-      console.time('');
+      // sanitize message
       this.messages[objectId] = this.sanitizeMessage(messagesArr[i]);
+      //add if new room
+      let roomname = this.messages[objectId].roomname.trim();
+      roomname = (roomname === '') ? this.defaultNoRoomName : roomname;
+      if (!this.roomExists(roomname)) {
+        this.renderRoom(roomname);
+      }
+      // render message
       this.renderMessage(this.messages[objectId]);
     }
   }
 
 };
+
+App.prototype.filterMessagesByRoom = function (roomName) {
+  // hide all bubbles .hide()
+  $(".bubble").hide();
+  // use data attribute to find bubbles that have roomname, .show();
+  $('[data-roomname="' + roomName + '"]').show();
+}
 
 App.prototype.sanitizeMessage = function (msg) {
   let attributesToSanitize = ['username', 'roomname', 'text'];
@@ -127,6 +159,10 @@ App.prototype.sanitizeMessage = function (msg) {
     msg[att] = $('<div></div>').text(msg[att]).html();
   }
   return msg;
+};
+
+App.prototype.roomExists = function(roomname) {
+  return this.rooms.indexOf(roomname) !== -1;
 };
 
 App.prototype.isFriend = function(username) {
