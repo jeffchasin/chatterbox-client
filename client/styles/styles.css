@@ -272,6 +272,18 @@ clear: both;
   filter: saturate(9);
 }
 
+.emojiPickerIcon {
+  right: 46px;
+}
+.emojiPicker section {
+  margin: 0px 0;
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px white inset;
+}
+
+
 @keyframes expand {
   from {
     transform: scale(0);

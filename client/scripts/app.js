@@ -38,8 +38,15 @@ App.prototype.setUpUI = function () {
   });
   //init filter
   $('#roomSelect').trigger('change');
+  //add room setup
   $('#addRoom').on('click', function() {
     that.handleAddRoom();
+  });
+  //emoji setup
+  $('#message').emojiPicker({
+    iconBackgroundColor: 'none',
+    height: '450px',
+    width:  '300px'
   });
 };
 
@@ -132,7 +139,7 @@ App.prototype.handleUsernameClick = function (username) {
 
   // search for all messages in the DOM w .username
   // add .friends to it
-  $('[data-username="' + username + '"]').addClass('friend');
+  $('[data-username="' + username + '"]').toggleClass('friend');
 };
 
 App.prototype.replaceIfBlankRoomName = function(roomName, blankToDescriptor) {
