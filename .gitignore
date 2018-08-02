@@ -1,5 +1,6 @@
 .gitignore
 .ideas/
+.vs/
 
 ### OSX ###
 .DS_Store

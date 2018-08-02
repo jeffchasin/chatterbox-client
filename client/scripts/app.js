@@ -4,7 +4,7 @@ const App = function () {
   this.userName = 'anonymous';
   this.messages = {};
   this.timer = false;
-  this.delay = 2000;
+  this.delay = 1000;
   this.currentRoom = 'lobby';
   this.friends = [];
   this.init();
@@ -17,15 +17,16 @@ App.prototype.init = function () {
   this.setUpUI();
   // this.testTemplate();
 
-  // this.timer = setInterval(() => {
-  //   this.fetch();
-  // }, this.delay);
+  this.timer = setInterval(() => {
+    this.fetch();
+  }, this.delay);
   this.fetch();
 };
 
 App.prototype.setUpUI = function () {
   const that = this;
-  $('#send').submit(function (e) {
+  $('#send').off('submit'); 
+  $('#send').on('submit', function (e) {
     e.preventDefault();
     that.handleSubmit(e, this);
   });
@@ -33,13 +34,16 @@ App.prototype.setUpUI = function () {
 
 App.prototype.handleSubmit = function (e, el) {
   // grab the msgInput.value
-  console.log('this ran');
   const msg = $('#message').val().trim();
   // invoke postMessage
   if (msg !== '') {
-    this.send(msg);
+    this.send({
+      text: msg,
+      roomname: this.currentRoom,
+      username: this.userName
+    });
     // clear input box
-    $(el).val('');
+    $('#message').val('');
   }
 };
 
@@ -52,10 +56,12 @@ App.prototype.fetch = function () {
   $.ajax({
     url: this.server,
     method: 'GET',
+    data: {limit: 50, order: '-createdAt'},
     dataType: 'json', //could be interpreted as a script
     success: function (data) {
-      console.log(data);
-      that.storeAndDisplayNewMessages(data.results);
+      console.log('new data!');
+      that.storeAndDisplayNewMessages(data.results.reverse());
+
     },
     error: function (error) {
       console.warn('Server Error: ', error);
@@ -106,10 +112,12 @@ App.prototype.storeAndDisplayNewMessages = function (messagesArr) {
   for (let i = 0; i < messagesArr.length; i++) {
     let objectId = messagesArr[i].objectId;
     if (this.messages[objectId] === undefined) {
+      console.time('');
       this.messages[objectId] = this.sanitizeMessage(messagesArr[i]);
       this.renderMessage(this.messages[objectId]);
     }
   }
+
 };
 
 App.prototype.sanitizeMessage = function (msg) {
@@ -130,19 +138,24 @@ App.prototype.renderMessage = function (msg) {
   const that = this;
   const templateString = $('#msg-template').html();
   // compile template
-  const templ = Handlebars.compile(templateString);
+  const templ = Handlebars.compile(templateString, {noEscape: true});
   // pass object into template, invoking it
   // set variable to returned html string
   const renderedTemplate = templ(
     {
       username: msg.username,
-      message: msg.text
+      message: msg.text,
+      roomname: msg.roomname,
+      fromMe:  $('<div></div>').text(this.userName.trim()).html() === msg.username.trim()
     });
   const $renderedTemplate = $(renderedTemplate.trim());
 
-  const $username = $renderedTemplate.find('.username');
-  $username.attr('data-username', msg.username);
-  $username.on('click', function(e) {
+  const $bubble = $renderedTemplate.find('.bubble');
+  $bubble.attr({
+    'data-username': msg.username,
+    'data-roomname': msg.roomname
+  });
+  $bubble.on('click', function(e) {
     //this = DOM element
     that.handleUsernameClick(msg.username);
   });
@@ -153,7 +166,6 @@ App.prototype.renderMessage = function (msg) {
 
   // set html body of chats to html string
   $('#chats').prepend($renderedTemplate);
-
 };
 
 

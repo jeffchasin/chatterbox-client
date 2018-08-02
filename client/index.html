@@ -28,16 +28,20 @@
 
 <body>
   <div id="main">
-    <h1>chatterbox</h1>
+    <div class='menu'>
+        <h1>chatterbox</h1>
+        <div>
+            <select id='roomSelect'>
+              <option>[All Rooms]</option>
+            </select>
+            <button class='btn'> Add room</button>
+          </div>
+    </div>
     <!-- Your HTML goes here! -->
     <div class="inputWrapper">
-      <div class='col'>
-        <select id='roomSelect'>
-        </select>
-      </div>
-      <div class="col">
+      <div>
         <form action="#" id="send" method="post">
-          <input type="text" name="message" id="message"/>
+          <input type="text" name="message" id="message" placeholder="SAY HI!"/><br/>
           <button type="submit" name="submit" class="submit">
             Submit
           </button>
@@ -48,10 +52,15 @@
   <div id="chats"></div>
 
   <script id="msg-template" type="text/x-handlebars-template">
-  <div class="message">
-    <h1 class="username">{{username}}</h1>
-    <div class="messageBody">
-      {{message}}
+  <div>
+    <div class="clear"></div>
+    <div class="bubble {{#if fromMe}} from-me {{else}} from-them {{/if}}">
+      <div class="message">
+        <h1 class="username">{{username}}</h1>
+        <div class="messageBody">
+          {{message}}
+        </div>
+      </div>
     </div>
   </div>
 </script>
