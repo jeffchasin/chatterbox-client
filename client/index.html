@@ -10,6 +10,7 @@
   <script src="bower_components/jquery/dist/jquery.js"></script>
   <script src="bower_components/underscore/underscore.js"></script>
   <script src="bower_components/handlebars/handlebars.min.js"></script>
+  <script src="bower_components/moment/min/moment.min.js"></script>
   <script>
     // YOU DO NOT NEED TO EDIT THIS CODE
     if (!/(&|\?)username=/.test(window.location.search)) {
@@ -33,14 +34,16 @@
         <div>
             <select id='roomSelect'>
             </select>
-            <button class='btn'> Add room</button>
+            <div class='menuItem'>
+              <button id="addRoom" class='btn'> Add room</button>
+            </div>
           </div>
     </div>
     <!-- Your HTML goes here! -->
     <div class="inputWrapper">
       <div>
         <form action="#" id="send" method="post">
-          <input type="text" name="message" id="message" placeholder="SAY HI!"/><br/>
+          <input type="text" name="message" id="message" placeholder="SAY HI!"/>
           <button type="submit" name="submit" class="submit">
             Submit
           </button>
@@ -54,8 +57,11 @@
   <div>
     <div class="clear"></div>
     <div class="bubble {{#if fromMe}} from-me {{else}} from-them {{/if}}">
+      <div class='date'>
+        {{date}}
+      </div>
       <div class="message">
-        <h1 class="username">{{username}}</h1>
+        <h1 class="username">{{username}} <span class='beFriend'> ⭐ </span></h1>
         <div class="messageBody">
           {{message}}
         </div>

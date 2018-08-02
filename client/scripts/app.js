@@ -38,6 +38,9 @@ App.prototype.setUpUI = function () {
   });
   //init filter
   $('#roomSelect').trigger('change');
+  $('#addRoom').on('click', function() {
+    that.handleAddRoom();
+  });
 };
 
 App.prototype.handleSubmit = function (e, el) {
@@ -107,6 +110,20 @@ App.prototype.handleRoomSelect = function (el) {
   this.filterMessagesByRoom(roomName);
 };
 
+App.prototype.handleAddRoom = function () {
+  // prompt user to type in new room name
+  let newRoomName = prompt('Enter a new room name: ') || this.currentRoom;
+  newRoomName = this.replaceIfBlankRoomName(newRoomName.trim(), 'toDescriptor');
+  //    check if room exists, if it doesn't
+  //        then render room
+  if (!this.roomExists(newRoomName)) {
+    this.renderRoom(newRoomName);
+  }
+  // set the value of the select to that room
+  $('#roomSelect').val(newRoomName);
+  $('#roomSelect').trigger('change');
+};
+
 App.prototype.handleUsernameClick = function (username) {
   // append $(this).text() to this.friends
   if (!this.isFriend(username)) {
@@ -118,10 +135,18 @@ App.prototype.handleUsernameClick = function (username) {
   $('[data-username="' + username + '"]').addClass('friend');
 };
 
+App.prototype.replaceIfBlankRoomName = function(roomName, blankToDescriptor) {
+  if ('toDescriptor') { // we have '' , we want [No Room]
+    return (roomName === '') ? this.defaultNoRoomName : roomName ;
+  } else { // 'toBlank'
+    return (roomName === this.defaultNoRoomName) ? '' : roomName ;
+  }
+};
+
 App.prototype.renderRoom = function (roomName) {
   this.rooms.push(roomName);
   const $option = $('<option>' + roomName + '</option>');
-  const optionValue = (roomName === this.defaultNoRoomName) ? '' : roomName;
+  const optionValue = this.replaceIfBlankRoomName(roomName, 'toBlank');
   $option.val(optionValue);
   $option.appendTo('#roomSelect');
 };
@@ -133,10 +158,10 @@ App.prototype.storeAndDisplayNewMessages = function (messagesArr) {
       // sanitize message
       this.messages[objectId] = this.sanitizeMessage(messagesArr[i]);
       //add if new room
-      let roomname = this.messages[objectId].roomname.trim();
-      roomname = (roomname === '') ? this.defaultNoRoomName : roomname;
-      if (!this.roomExists(roomname)) {
-        this.renderRoom(roomname);
+      this.messages[objectId].roomname = this.replaceIfBlankRoomName(this.messages[objectId].roomname.trim(), 'toDescriptor');
+      let roomName = this.messages[objectId].roomname;
+      if (!this.roomExists(roomName)) {
+        this.renderRoom(roomName);
       }
       // render message
       this.renderMessage(this.messages[objectId]);
@@ -182,6 +207,7 @@ App.prototype.renderMessage = function (msg) {
       username: msg.username,
       message: msg.text,
       roomname: msg.roomname,
+      date: moment(msg.createdAt).format('llll'),
       fromMe:  $('<div></div>').text(this.userName.trim()).html() === msg.username.trim()
     });
   const $renderedTemplate = $(renderedTemplate.trim());
@@ -195,6 +221,10 @@ App.prototype.renderMessage = function (msg) {
     //this = DOM element
     that.handleUsernameClick(msg.username);
   });
+
+  if (msg.roomname !== this.currentRoom) {
+    $bubble.hide();
+  }
 
   if (this.isFriend(msg.username)) {
     $renderedTemplate.addClass('friend');

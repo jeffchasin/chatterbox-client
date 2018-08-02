@@ -49,6 +49,10 @@ body {
   line-height: 13px;
 }
 
+.menuItem{
+  margin: 10px 0;
+}
+
 form {
   padding: 20px;
   padding-left: 0;
@@ -77,7 +81,7 @@ form input[type=text] {
   border-bottom: 1px solid #c0c0c0;
 }
 
-input:focus{
+input:focus, button:focus, submit:focus{
   outline: none;
   font-weight: bold;
 }
@@ -235,7 +239,13 @@ clear: both;
   line-height: X;        /* fallback */
   max-height: X*10;       /* fallback */
 }
-
+.bubble .date{
+  font-size: 10px;
+  position: absolute;
+  top: -15px;
+  white-space: nowrap;  
+  color: #c0c0c0;
+}
 .message .username{
   font-size: 12px;
 }
@@ -244,8 +254,22 @@ clear: both;
   font-size: 14px;
 }
 
-.friend {
-  font-weight: bold;   
+.friend, .friend::before {
+  background-color: rgb(241, 170, 37);  
+  border-color: rgb(241, 170, 37);  
+}
+
+.beFriend {
+  filter: grayscale(100%);
+}
+
+.beFriend:hover {
+  cursor: pointer;
+  filter: hue-rotate(90deg);
+}
+
+.friend .beFriend {
+  filter: saturate(9);
 }
 
 @keyframes expand {
