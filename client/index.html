@@ -1,8 +1,8 @@
 <!doctype html>
 <html>
-
-<head>
+  <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>chatterbox</title>
   <link rel="stylesheet" type="text/css" href="bower_components/jquery-emoji-picker/css/jquery.emojipicker.css">
   <link rel="stylesheet" type="text/css" href="bower_components/jquery-emoji-picker/css/jquery.emojipicker.a.css">
@@ -34,6 +34,8 @@
 <body>
   <div id="main">
     <div class='menu'>
+      <div class='menuIcon'></div>
+      <div class='menuContent'>
         <h1>chatterbox</h1>
         <div>
             <select id='roomSelect'>
@@ -41,7 +43,8 @@
             <div class='menuItem'>
               <button id="addRoom" class='btn'> Add room</button>
             </div>
-          </div>
+        </div>
+         </div>
     </div>
     <!-- Your HTML goes here! -->
     <div class="inputWrapper">
@@ -52,6 +55,9 @@
             Submit
           </button>
         </form>
+        <div class='info'>
+          Posting in <span class='info_room'></span> as <span class='info_user'></span>
+        </div>
       </div>
     </div>
   </div>

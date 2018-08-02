@@ -48,6 +48,12 @@ App.prototype.setUpUI = function () {
     height: '450px',
     width:  '300px'
   });
+  //reset after emoji
+  $('#message').css('width', '90%');
+
+  $('.menuIcon').on('click', function(){
+    $(this).closest('.menu').toggleClass('shown');
+  });
 };
 
 App.prototype.handleSubmit = function (e, el) {
@@ -114,6 +120,9 @@ App.prototype.send = function (msgObj) {
 App.prototype.handleRoomSelect = function (el) {
   const roomName = $(el).val();
   this.currentRoom = roomName;
+  $('.info').find('.info_room').html(roomName);
+  $('.info').find('.info_user').html(this.userName);
+  $('.info').show();
   this.filterMessagesByRoom(roomName);
 };
 
