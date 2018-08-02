@@ -146,8 +146,8 @@ App.prototype.handleUsernameClick = function (username) {
   });
 };
 
-App.prototype.replaceIfBlankRoomName = function(roomName, blankToDescriptor) {
-  if ('toDescriptor') { // we have '' , we want [No Room]
+App.prototype.replaceIfBlankRoomName = function(roomName, action) {
+  if (action === 'toDescriptor') { // we have '' , we want [No Room]
     return (roomName === '') ? this.defaultNoRoomName : roomName ;
   } else { // 'toBlank'
     return (roomName === this.defaultNoRoomName) ? '' : roomName ;
@@ -157,7 +157,7 @@ App.prototype.replaceIfBlankRoomName = function(roomName, blankToDescriptor) {
 App.prototype.renderRoom = function (roomName) {
   this.rooms.push(roomName);
   const $option = $('<option>' + roomName + '</option>');
-  const optionValue = this.replaceIfBlankRoomName(roomName, 'toBlank');
+  const optionValue = this.replaceIfBlankRoomName(roomName, 'toDescriptor');
   $option.val(optionValue);
   $option.appendTo('#roomSelect');
 };
